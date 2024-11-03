@@ -1,6 +1,8 @@
 from django import forms
 from .models import SolicitudTienda
 from .models import SolicitudUsuario
+from .models import Inventario
+from .models import InventarioArriendo
 
 class SolicitudTiendaForm(forms.ModelForm):
     class Meta:
@@ -30,3 +32,51 @@ class SolicitudUsuarioForm(forms.ModelForm):
             self.add_error('conf_contraseña', "Las contraseñas deben coincidir.")
 
         return cleaned_data
+
+class InventarioForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['nombre_producto', 'precio', 'cantidad_disponible', 'talla_producto']  # Cambia los campos según tu modelo
+        labels = {
+            'nombre_producto : nombre'
+            'precio': 'Precio (CLP)', 
+            'cantidad_disponible': 'Cantidad',
+            'talla_producto': 'Talla',
+        }
+        widgets = {
+            'precio': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'id': 'precio', 
+                'step': '500',  
+                'placeholder': 'Ingrese el precio en CLP'  
+            }),
+            'cantidad_disponible': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'id': 'cantidadDisponible'
+            }),
+            'talla_producto': forms.Select(attrs={'class': 'form-control', 'id': 'tallaProducto'}),  
+        }
+
+class InventarioArriendoForm(forms.ModelForm):
+    class Meta:
+        model = InventarioArriendo
+        fields = ['nombre_producto', 'cantidad_disponible', 'talla_producto', 'precio_arriendo']
+        labels = {
+            'nombre_producto': 'Nombre',  
+            'cantidad_disponible': 'Cantidad',
+            'talla_producto': 'Talla',
+            'precio_arriendo': 'Precio de Arriendo (CLP)',
+        }
+        widgets = {
+            'precio_arriendo': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'precioArriendo',
+                'step': '500',  
+                'placeholder': 'Ingrese el precio de arriendo en CLP'  
+            }),
+            'cantidad_disponible': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'cantidadDisponible'
+            }),
+            'talla_producto': forms.Select(attrs={'class': 'form-control', 'id': 'talla_producto'}),
+        }

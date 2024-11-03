@@ -176,3 +176,78 @@ class SolicitudTienda(models.Model):
     ], default="Metropolitana de Santiago"
 )
 
+#####naty###############
+
+class Inventario(models.Model):
+    id_producto = models.AutoField(primary_key=True)
+    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
+    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)  
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
+    cantidad_disponible = models.IntegerField()
+    talla_producto = models.CharField(
+        max_length=10,
+        choices=[
+            ("XS", "XS"),
+            ("S", "S"),
+            ("M", "M"),
+            ("L", "L"),
+            ("XL", "XL"),
+            ("XXL", "XXL"),
+            ("35", "35"),
+            ("36", "36"),
+            ("37", "37"),
+            ("38", "38"),
+            ("39", "39"),
+            ("40", "40"),
+            ("41", "41"),
+            ("42", "42"),
+            ("43", "43"),
+            ("44", "44"),
+            ("45", "45"),
+        ], 
+        default="45"  
+    )
+
+    class Meta:
+        db_table = 'Inventario'
+        
+class InventarioArriendo(models.Model):
+    id_producto = models.AutoField(primary_key=True)
+    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
+    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)  
+    precio_arriendo = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
+    cantidad_disponible = models.IntegerField()
+    talla_producto = models.CharField(
+        max_length=10,
+        choices=[
+            ("XS", "XS"),
+            ("S", "S"),
+            ("M", "M"),
+            ("L", "L"),
+            ("XL", "XL"),
+            ("XXL", "XXL"),
+            ("35", "35"),
+            ("36", "36"),
+            ("37", "37"),
+            ("38", "38"),
+            ("39", "39"),
+            ("40", "40"),
+            ("41", "41"),
+            ("42", "42"),
+            ("43", "43"),
+            ("44", "44"),
+            ("45", "45"),
+        ], 
+        default="45"  
+    )
+    class Meta:
+        db_table = 'InventarioArriendo'
+
+class ProductoArriendo(models.Model):
+    id_producto = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField()
+    precio_arriendo = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.nombre

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from allsnow_app import views
+from allsnow_app.views import agregar_productos_arriendo
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +27,19 @@ urlpatterns = [
     path('inicio/trabaja-con-nosotros', views.trabaja_con_nosotros, name='trabaja_con_nosotros'),
     path('inicio/registrarme', views.registrarme, name='registrarme'),
     path('aprovar-solicitud/<int:solicitud_id>/',views.aprobar_solicitud,name='aprobar_solicitud'),
-    path('rechazar-solicitud/<int:solicitud_id>/',views.rechazar_solicitud,name='rechazar_solicitud')
+    path('rechazar-solicitud/<int:solicitud_id>/',views.rechazar_solicitud,name='rechazar_solicitud'),
+    
+    #### naty ######
+    path('admin/', admin.site.urls),
+    path('filtro_tienda/', views.filtro_tiendas, name='filtro_tienda'),
+    path('administrador/', views.administrador, name='administrador'),  # Coma añadida aquí
+    path('inventario_ventas/', views.inventario_ventas, name='inventario_ventas'),
+    path('agregar_productos/', views.agregar_productos, name='agregar_productos'),
+    path('editar_producto_arriendo/<int:id_producto>/', views.editar_producto_arriendo, name='editar_producto_arriendo'),   
+    path('inventario_arriendo/', views.inventario_arriendo, name='inventario_arriendo'),
+    path('agregar_producto_arriendo/', agregar_productos_arriendo, name='agregar_productos_arriendo'),
+    path('eliminar_producto_arriendo/<int:id_producto>/', views.eliminar_producto_arriendo, name='eliminar_producto_arriendo'),
+    path('eliminar_productos/<int:id_producto>/', views.eliminar_productos, name='eliminar_productos'),
+    path('editar_producto/', views.editar_producto, name='editar_producto'),
+    path('editar_producto_arriendo/', views.editar_producto_arriendo, name='editar_producto_arriendo'),
 ]
