@@ -39,7 +39,7 @@ class Tiendas(models.Model):
         ("Maule", "Maule"),
         ("Ñuble", "Ñuble"),
         ("Biobío", "Biobío"),
-        ("Araucanía", "Araucanía"),
+        ("La Araucanía", "La Araucanía"),
         ("Los Ríos", "Los Ríos"),
         ("Los Lagos", "Los Lagos"),
         ("Aysén del General Carlos Ibáñez del Campo", "Aysén del General Carlos Ibáñez del Campo"),
@@ -153,6 +153,7 @@ class SolicitudTienda(models.Model):
     id_solicitud_tienda = models.AutoField(primary_key=True)
     nombre_tienda = models.CharField(max_length=100)
     patente_local = models.CharField(max_length=10)
+    fecha_solicitud = models.DateField(auto_now_add=True)
     region = models.CharField(
     max_length=100,
     choices=[

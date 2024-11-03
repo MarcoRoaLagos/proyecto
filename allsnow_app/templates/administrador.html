@@ -10,7 +10,6 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-
         <a class="navbar-brand" href="#">
             <img src="{% static 'img/logo.png' %}" alt="Logo All Snow" class="logo">
             All Snow
@@ -28,6 +27,7 @@
             </ul>
         </div>
     </nav>
+    
     <div class="container mt-4">
         <h2>Panel de Administración</h2>
         
@@ -53,20 +53,20 @@
                     <thead>
                         <tr>
                             <th>ID Suscripción</th>
-                            <th>Nombre Tienda</th>
+                            <th>ID Tienda</th>
                             <th>Fecha de Inicio</th>
                             <th>Fecha de Fin</th>
-                            <th>Estado</th>
+                            <th>Monto</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for suscripcion in suscripciones %}
                         <tr>
-                            <td>{{ suscripcion.id }}</td>
-                            <td>{{ suscripcion.nombre_tienda }}</td>
+                            <td>{{ suscripcion.id_sub }}</td>
+                            <td>{{ suscripcion.id_tienda_id }}</td>
                             <td>{{ suscripcion.fecha_inicio }}</td>
                             <td>{{ suscripcion.fecha_fin }}</td>
-                            <td>{{ suscripcion.estado }}</td>
+                            <td>{{ suscripcion.monto }}</td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -93,8 +93,8 @@
                     <tbody>
                         {% for tienda in tiendas %}
                         <tr>
-                            <td>{{ tienda.id }}</td>
-                            <td>{{ tienda.nombre }}</td>
+                            <td>{{ tienda.id_tienda }}</td>
+                            <td>{{ tienda.nombre_tienda }}</td>
                             <td>{{ tienda.ubicacion }}</td>
                             <td>{{ tienda.region }}</td>
                             <td>{{ tienda.estado_suscripcion }}</td>
@@ -116,25 +116,70 @@
                         <tr>
                             <th>ID Solicitud</th>
                             <th>Nombre Tienda</th>
-                            <th>Nombre del Solicitante</th>
+                            <th>Patente</th>
                             <th>Fecha de Solicitud</th>
-                            <th>Estado</th>
+                            <th>Región</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for solicitud in solicitudes %}
                         <tr>
-                            <td>{{ solicitud.id }}</td>
+                            <td>{{ solicitud.id_solicitud_tienda }}</td>
                             <td>{{ solicitud.nombre_tienda }}</td>
-                            <td>{{ solicitud.nombre_solicitante }}</td>
+                            <td>{{ solicitud.patente_local }}</td>
                             <td>{{ solicitud.fecha_solicitud }}</td>
-                            <td>{{ solicitud.estado }}</td>
+                            <td>{{ solicitud.region }}</td>
                             <td>
-                                <a href="{% url 'aprobar_solicitud' solicitud.id %}" class="btn btn-success btn-sm">Aprobar</a>
-                                <a href="{% url 'rechazar_solicitud' solicitud.id %}" class="btn btn-danger btn-sm">Rechazar</a>
+                                <!-- Button to trigger Approve modal -->
+                                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#approveModal{{ solicitud.id_solicitud_tienda }}">Aprobar</button>
+                                
+                                <!-- Button to trigger Reject modal -->
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejectModal{{ solicitud.id_solicitud_tienda }}">Rechazar</button>
                             </td>
                         </tr>
+                        
+                        <!-- Approve Modal -->
+                        <div class="modal fade" id="approveModal{{ solicitud.id_solicitud_tienda }}" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="approveModalLabel">Confirmar Aprobación</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ¿Estás seguro de aprobar la solicitud de {{ solicitud.nombre_tienda }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        <a href="{% url 'aprobar_solicitud' solicitud.id_solicitud_tienda %}" class="btn btn-success">Confirmar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reject Modal -->
+                        <div class="modal fade" id="rejectModal{{ solicitud.id_solicitud_tienda }}" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="rejectModalLabel">Confirmar Rechazo</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ¿Estás seguro de rechazar la solicitud de {{ solicitud.nombre_tienda }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        <a href="{% url 'rechazar_solicitud' solicitud.id_solicitud_tienda %}" class="btn btn-danger">Confirmar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {% empty %}
                         <tr>
                             <td colspan="6">No hay solicitudes pendientes.</td>

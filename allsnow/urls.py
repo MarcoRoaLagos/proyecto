@@ -25,4 +25,6 @@ urlpatterns = [
     path('inicio/', views.inicio, name='inicio'),
     path('inicio/trabaja-con-nosotros', views.trabaja_con_nosotros, name='trabaja_con_nosotros'),
     path('inicio/registrarme', views.registrarme, name='registrarme'),
+    path('aprovar-solicitud/<int:solicitud_id>/',views.aprobar_solicitud,name='aprobar_solicitud'),
+    path('rechazar-solicitud/<int:solicitud_id>/',views.rechazar_solicitud,name='rechazar_solicitud')
 ]
