@@ -21,5 +21,6 @@ from allsnow_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('filtro_tienda/', views.filtro_tiendas, name='filtro_tienda'),
-    path('administrador/', views.administrador, name='administrador')
+    path('administrador/', views.administrador, name='administrador'),
+    path('inicio/', views.inicio, name='inicio'),
 ]

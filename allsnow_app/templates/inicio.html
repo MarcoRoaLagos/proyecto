@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'img/logo_transparente.png' %}">
+    <title>All Snow - Vive la nieve al máximo</title>
+    <link rel="stylesheet" href="{% static 'css/stylesinicio.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+                <li><a href="#centros-asociados">Centros asociados</a></li>
+                <li><a href="#trabaja-con-nosotros" onclick="mostrarFormulario('trabajo')">Trabaja con nosotros</a></li>
+                <li><a href="#registrarme" onclick="mostrarFormulario('registro')">Registrarme</a></li>
+            </ul>
+            <div class="login">
+                <input type="email" placeholder="Correo electrónico">
+                <input type="password" placeholder="Contraseña">
+                <button class="button iniciar-sesion">Iniciar sesión</button>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <img src="{% static 'img/fondo.png' %} "alt="Paisaje de nieve">
+        </section>
+    
+        <div class="form-container-wrapper">
+            <section class="formulario-registro" id="formularioRegistro">
+                <div class="form-container">
+                    <h2>Registrarme</h2>
+                    <form>
+                        <input type="text" placeholder="Nombre" required>
+                        <input type="email" placeholder="Correo electrónico" required>
+                        <input type="password" placeholder="Contraseña" required>
+                        <input type="password" placeholder="Confirmar contraseña" required>
+                        <button type="submit" class="button bigbutton">Registrarme</button>
+                    </form>
+                    <p>Al registrarte aceptas los términos y condiciones.</p>
+                </div>
+            </section>
+    
+            <section class="formulario-trabaja-con-nosotros" id="formularioTrabajaConNosotros">
+                <div class="form-container">
+                    <h2>Trabaja con Nosotros</h2>
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <h3>Datos del usuario</h3>
+                                <input type="text" placeholder="Nombre" required>
+                                <input type="text" placeholder="Apellido" required>
+                                <input type="text" placeholder="Rut" required>
+                                <input type="tel" placeholder="Teléfono" required>
+                                <input type="email" placeholder="Correo electrónico" required>
+                                <input type="email" placeholder="Confirmar correo electrónico" required>
+                                <input type="password" placeholder="Contraseña" required>
+                                <input type="password" placeholder="Confirmar contraseña" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <h3>Datos del local</h3>
+                                <input type="text" placeholder="Nombre del Local" required>
+                                <input type="text" placeholder="Patente del Local" required>
+                                <select required>
+                                    <option value="" disabled selected>Seleccione una región</option>
+                                    <option value="Arica y Parinacota">Arica y Parinacota</option>
+                                    <option value="Tarapacá">Tarapacá</option>
+                                    <option value="Antofagasta">Antofagasta</option>
+                                    <option value="Atacama">Atacama</option>
+                                    <option value="Coquimbo">Coquimbo</option>
+                                    <option value="Valparaíso">Valparaíso</option>
+                                    <option value="Metropolitana">Metropolitana</option>
+                                    <option value="O'Higgins">O'Higgins</option>
+                                    <option value="Maule">Maule</option>
+                                    <option value="Biobío">Biobío</option>
+                                    <option value="La Araucanía">La Araucanía</option>
+                                    <option value="Los Ríos">Los Ríos</option>
+                                    <option value="Los Lagos">Los Lagos</option>
+                                    <option value="Aysén">Aysén</option>
+                                    <option value="Magallanes">Magallanes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="button bigbutton">Registrar Local</button>
+                    </form>
+                    <p>Al registrarte aceptas los términos y condiciones.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="contacto">
+            <p class="negrita">CONTACTO</p>
+            <p>📞 +56971528690</p>
+            <p>✉️ allsnowcl@gmail.com</p>
+        </div>
+    </footer>
+    <script src="{% static 'css/scriptinicio.js' %}"></script>
+</body>
+</html>

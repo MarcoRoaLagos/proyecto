@@ -37,3 +37,6 @@ def filtro_tiendas(request):
 
 def administrador(request):
     return render(request,'administrador.html')
+
+def inicio(request):
+    return render(request, 'inicio.html')
