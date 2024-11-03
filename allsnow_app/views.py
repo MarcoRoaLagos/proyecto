@@ -40,3 +40,9 @@ def administrador(request):
 
 def inicio(request):
     return render(request, 'inicio.html')
+
+def trabaja_con_nosotros(request):
+    return render(request, 'inicio.html')
+
+def registrarme(request):
+    return render(request, 'inicio.html')

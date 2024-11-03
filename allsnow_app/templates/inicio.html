@@ -35,7 +35,7 @@
             <section class="formulario-registro" id="formularioRegistro">
                 <div class="form-container">
                     <h2>Registrarme</h2>
-                    <form>
+                    <form method="get" action="{% url 'registrarme' %}"></form>
                         <input type="text" placeholder="Nombre" required>
                         <input type="email" placeholder="Correo electrónico" required>
                         <input type="password" placeholder="Contraseña" required>
@@ -49,13 +49,13 @@
             <section class="formulario-trabaja-con-nosotros" id="formularioTrabajaConNosotros">
                 <div class="form-container">
                     <h2>Trabaja con Nosotros</h2>
-                    <form>
+                    <form method="get" action="{% url 'trabaja_con_nosotros' %}"></form>
                         <div class="form-row">
                             <div class="form-group">
                                 <h3>Datos del usuario</h3>
                                 <input type="text" placeholder="Nombre" required>
                                 <input type="text" placeholder="Apellido" required>
-                                <input type="text" placeholder="Rut" required>
+                                <input type="text" placeholder="Rut. Ej: 12345678k" required>
                                 <input type="tel" placeholder="Teléfono" required>
                                 <input type="email" placeholder="Correo electrónico" required>
                                 <input type="email" placeholder="Confirmar correo electrónico" required>
@@ -78,6 +78,7 @@
                                     <option value="Metropolitana">Metropolitana</option>
                                     <option value="O'Higgins">O'Higgins</option>
                                     <option value="Maule">Maule</option>
+                                    <option value="Ñuble">Ñuble</option>
                                     <option value="Biobío">Biobío</option>
                                     <option value="La Araucanía">La Araucanía</option>
                                     <option value="Los Ríos">Los Ríos</option>

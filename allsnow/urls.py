@@ -23,4 +23,6 @@ urlpatterns = [
     path('filtro_tienda/', views.filtro_tiendas, name='filtro_tienda'),
     path('administrador/', views.administrador, name='administrador'),
     path('inicio/', views.inicio, name='inicio'),
+    path('inicio/trabaja-con-nosotros', views.trabaja_con_nosotros, name='trabaja_con_nosotros'),
+    path('inicio/registrarme', views.registrarme, name='registrarme'),
 ]
