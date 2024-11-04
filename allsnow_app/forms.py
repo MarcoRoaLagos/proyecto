@@ -80,3 +80,11 @@ class InventarioArriendoForm(forms.ModelForm):
             }),
             'talla_producto': forms.Select(attrs={'class': 'form-control', 'id': 'talla_producto'}),
         }
+        
+####################NATY######################3
+from allsnow_app.models import Tiendas
+
+class TiendaForm(forms.ModelForm):
+    class Meta:
+        model = Tiendas
+        fields = ['descripcion'] 

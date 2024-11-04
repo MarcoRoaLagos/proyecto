@@ -32,7 +32,7 @@ urlpatterns = [
     #### naty ######
     path('admin/', admin.site.urls),
     path('filtro_tienda/', views.filtro_tiendas, name='filtro_tienda'),
-    path('administrador/', views.administrador, name='administrador'),  # Coma añadida aquí
+    path('administrador/', views.administrador, name='administrador'),  
     path('inventario_ventas/', views.inventario_ventas, name='inventario_ventas'),
     path('agregar_productos/', views.agregar_productos, name='agregar_productos'),
     path('editar_producto_arriendo/<int:id_producto>/', views.editar_producto_arriendo, name='editar_producto_arriendo'),   
@@ -42,4 +42,7 @@ urlpatterns = [
     path('eliminar_productos/<int:id_producto>/', views.eliminar_productos, name='eliminar_productos'),
     path('editar_producto/', views.editar_producto, name='editar_producto'),
     path('editar_producto_arriendo/', views.editar_producto_arriendo, name='editar_producto_arriendo'),
+    path('interfaz_dueno/', views.interfaz_dueno, name='interfaz_dueno'),
+    path('centro_rental_view/', views.centro_rental_view, name='centro_rental_view'),
+    path('editar_descripcion_view/', views.editar_descripcion_view, name='editar_descripcion_view'),
 ]

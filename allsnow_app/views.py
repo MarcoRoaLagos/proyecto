@@ -238,3 +238,66 @@ def eliminar_productos(request, id_producto):
         return redirect('inventario_ventas')  
     return redirect('inventario_ventas')  
 
+
+###############################NATA########################################
+def interfaz_dueno(request):
+     return render(request, 'interfaz_dueno.html')
+
+
+#para que se muestre el nombre de la tienda segun el dueño
+from django.shortcuts import render
+from .models import Usuarios, UsuarioTienda, Tiendas
+
+def centro_rental_view(request):
+    usuario = Usuarios.objects.get(id_usuario=request.user.id)
+    usuario_tienda = UsuarioTienda.objects.filter(id_usuario=usuario).first()
+    if usuario_tienda:
+        tienda = usuario_tienda.id_tienda
+        nombre_centro = f'CENTRO DE RENTAL "{tienda.nombre_tienda.upper()}"'
+        descripcion = tienda.descripcion  
+        ubicacion = tienda.ubicacion
+    else:
+        nombre_centro = "CENTRO DE RENTAL NO DISPONIBLE"
+        descripcion = "No tienes un centro de rental asignado."
+        ubicacion = "No tienes un centro de rental asignado."
+
+    print(f'Nombre Centro: {nombre_centro}')  
+    print(f'Descripción: {descripcion}')       
+    print(f'Ubicación:{ubicacion}')
+
+    context = {
+        'nombre_centro': nombre_centro,
+        'descripcion': descripcion,
+        'ubicacion':ubicacion,
+    }
+    return render(request, 'interfaz_dueno.html', context)
+
+#Para editar la descripcion de las tiendas por los dueños
+from django.shortcuts import render, redirect
+from .forms import TiendaForm
+
+def editar_descripcion_view(request):
+    usuario = Usuarios.objects.get(id_usuario=request.user.id)
+    usuario_tienda = UsuarioTienda.objects.filter(id_usuario=usuario).first()
+    
+    if usuario_tienda:
+        tienda = usuario_tienda.id_tienda
+        
+        if request.method == 'POST':
+            form = TiendaForm(request.POST, instance=tienda)
+            if form.is_valid():
+                form.save()
+                return redirect('centro_rental_view')  
+        else:
+            form = TiendaForm(instance=tienda)
+        
+        context = {
+            'form': form,
+            'nombre_centro': f'CENTRO DE RENTAL "{tienda.nombre_tienda.upper()}"'
+        }
+        return render(request, 'editar_descripcion_view.html', context)  
+    else:
+        return redirect('centro_rental_view.html')  #cambiar despues esto para que se vaya al inicio
+
+
+

@@ -26,27 +26,30 @@ class Tiendas(models.Model):
     nombre_tienda = models.CharField(max_length=100)
     ubicacion = models.CharField(max_length=225)
     region = models.CharField(
-    max_length=100,
-    choices=[
-        ("Arica y Parinacota", "Arica y Parinacota"),
-        ("Tarapacá", "Tarapacá"),
-        ("Antofagasta", "Antofagasta"),
-        ("Atacama", "Atacama"),
-        ("Coquimbo", "Coquimbo"),
-        ("Valparaíso", "Valparaíso"),
-        ("Metropolitana de Santiago", "Metropolitana de Santiago"),
-        ("Libertador General Bernardo O'Higgins", "Libertador General Bernardo O'Higgins"),
-        ("Maule", "Maule"),
-        ("Ñuble", "Ñuble"),
-        ("Biobío", "Biobío"),
-        ("La Araucanía", "La Araucanía"),
-        ("Los Ríos", "Los Ríos"),
-        ("Los Lagos", "Los Lagos"),
-        ("Aysén del General Carlos Ibáñez del Campo", "Aysén del General Carlos Ibáñez del Campo"),
-        ("Magallanes y de la Antártica Chilena", "Magallanes y de la Antártica Chilena")
-    ], default="Metropolitana de Santiago"
-)
+        max_length=100,
+        choices=[
+            ("Arica y Parinacota", "Arica y Parinacota"),
+            ("Tarapacá", "Tarapacá"),
+            ("Antofagasta", "Antofagasta"),
+            ("Atacama", "Atacama"),
+            ("Coquimbo", "Coquimbo"),
+            ("Valparaíso", "Valparaíso"),
+            ("Metropolitana de Santiago", "Metropolitana de Santiago"),
+            ("Libertador General Bernardo O'Higgins", "Libertador General Bernardo O'Higgins"),
+            ("Maule", "Maule"),
+            ("Ñuble", "Ñuble"),
+            ("Biobío", "Biobío"),
+            ("La Araucanía", "La Araucanía"),
+            ("Los Ríos", "Los Ríos"),
+            ("Los Lagos", "Los Lagos"),
+            ("Aysén del General Carlos Ibáñez del Campo", "Aysén del General Carlos Ibáñez del Campo"),
+            ("Magallanes y de la Antártica Chilena", "Magallanes y de la Antártica Chilena")
+        ], 
+        default="Metropolitana de Santiago"
+    )
     estado_suscripcion = models.CharField(max_length=10, choices=[('activa', 'Activa'), ('desactiva', 'Desactiva')])
+    descripcion = models.TextField(null=True, blank=True)
+
     class Meta:
         db_table = 'Tiendas'
 
@@ -72,16 +75,6 @@ class Ventas(models.Model):
         db_table = 'Ventas'
 
 
-class Inventario(models.Model):
-    id_producto = models.AutoField(primary_key=True)
-    id_tienda = models.ForeignKey(Tiendas, on_delete=models.CASCADE)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    cantidad_disponible = models.IntegerField()
-
-    class Meta:
-        db_table = 'Inventario'
-
-
 class Productos(models.Model):
     id_producto = models.AutoField(primary_key=True)
     nombre_producto = models.CharField(max_length=100)
@@ -90,6 +83,37 @@ class Productos(models.Model):
 
     class Meta:
         db_table = 'Productos'
+
+
+class InventarioArriendo(models.Model):
+    id_producto = models.AutoField(primary_key=True)
+    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
+    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)
+    precio_arriendo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cantidad_disponible = models.IntegerField()
+    talla_producto = models.CharField(
+        max_length=10,
+        choices=[
+            ("XS", "XS"), ("S", "S"), ("M", "M"), ("L", "L"), ("XL", "XL"), ("XXL", "XXL"),
+            ("35", "35"), ("36", "36"), ("37", "37"), ("38", "38"), ("39", "39"),
+            ("40", "40"), ("41", "41"), ("42", "42"), ("43", "43"), ("44", "44"), ("45", "45")
+        ],
+        default="45"
+    )
+
+    class Meta:
+        db_table = 'InventarioArriendo'
+
+
+class DetalleArriendo(models.Model):
+    id_detallea = models.AutoField(primary_key=True)
+    id_arriendo = models.ForeignKey('Arriendos', on_delete=models.CASCADE)
+    id_producto = models.ForeignKey(InventarioArriendo, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        db_table = 'Detalle_Arriendo'
 
 
 class Arriendos(models.Model):
@@ -104,21 +128,10 @@ class Arriendos(models.Model):
         db_table = 'Arriendos'
 
 
-class DetalleArriendo(models.Model):
-    id_detallea = models.AutoField(primary_key=True)
-    id_arriendo = models.ForeignKey(Arriendos, on_delete=models.CASCADE)
-    id_producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-
-    class Meta:
-        db_table = 'Detalle_Arriendo'
-
-
 class DetallesVenta(models.Model):
     id_detallev = models.AutoField(primary_key=True)
     id_venta = models.ForeignKey(Ventas, on_delete=models.CASCADE)
-    id_producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+    id_producto = models.ForeignKey('Inventario', on_delete=models.CASCADE)
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -136,12 +149,33 @@ class Suscripcion(models.Model):
     class Meta:
         db_table = 'Suscripcion'
 
+
+class Inventario(models.Model):
+    id_producto = models.AutoField(primary_key=True)
+    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
+    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cantidad_disponible = models.IntegerField()
+    talla_producto = models.CharField(
+        max_length=10,
+        choices=[
+            ("XS", "XS"), ("S", "S"), ("M", "M"), ("L", "L"), ("XL", "XL"), ("XXL", "XXL"),
+            ("35", "35"), ("36", "36"), ("37", "37"), ("38", "38"), ("39", "39"),
+            ("40", "40"), ("41", "41"), ("42", "42"), ("43", "43"), ("44", "44"), ("45", "45")
+        ],
+        default="45"
+    )
+
+    class Meta:
+        db_table = 'Inventario'
+
+
 class SolicitudUsuario(models.Model):
     id_solicitud_usuario = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     rut = models.CharField(max_length=12)
-    telefono = models.IntegerField(max_length=9)
+    telefono = models.IntegerField()
     correo = models.EmailField(max_length=100)
     conf_correo = models.EmailField(max_length=100)
     contraseña = models.CharField(max_length=225)
@@ -155,99 +189,16 @@ class SolicitudTienda(models.Model):
     patente_local = models.CharField(max_length=10)
     fecha_solicitud = models.DateField(auto_now_add=True)
     region = models.CharField(
-    max_length=100,
-    choices=[
-        ("Arica y Parinacota", "Arica y Parinacota"),
-        ("Tarapacá", "Tarapacá"),
-        ("Antofagasta", "Antofagasta"),
-        ("Atacama", "Atacama"),
-        ("Coquimbo", "Coquimbo"),
-        ("Valparaíso", "Valparaíso"),
-        ("Metropolitana", "Metropolitana"),
-        ("O'Higgins", "O'Higgins"),
-        ("Maule", "Maule"),
-        ("Ñuble", "Ñuble"),
-        ("Biobío", "Biobío"),
-        ("La Araucanía", "La Araucanía"),
-        ("Los Ríos", "Los Ríos"),
-        ("Los Lagos", "Los Lagos"),
-        ("Aysén", "Aysén"),
-        ("Magallanes", "Magallanes")
-    ], default="Metropolitana de Santiago"
-)
-
-#####naty###############
-
-class Inventario(models.Model):
-    id_producto = models.AutoField(primary_key=True)
-    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
-    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)  
-    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
-    cantidad_disponible = models.IntegerField()
-    talla_producto = models.CharField(
-        max_length=10,
+        max_length=100,
         choices=[
-            ("XS", "XS"),
-            ("S", "S"),
-            ("M", "M"),
-            ("L", "L"),
-            ("XL", "XL"),
-            ("XXL", "XXL"),
-            ("35", "35"),
-            ("36", "36"),
-            ("37", "37"),
-            ("38", "38"),
-            ("39", "39"),
-            ("40", "40"),
-            ("41", "41"),
-            ("42", "42"),
-            ("43", "43"),
-            ("44", "44"),
-            ("45", "45"),
-        ], 
-        default="45"  
+            ("Arica y Parinacota", "Arica y Parinacota"), ("Tarapacá", "Tarapacá"), ("Antofagasta", "Antofagasta"),
+            ("Atacama", "Atacama"), ("Coquimbo", "Coquimbo"), ("Valparaíso", "Valparaíso"),
+            ("Metropolitana", "Metropolitana"), ("O'Higgins", "O'Higgins"), ("Maule", "Maule"),
+            ("Ñuble", "Ñuble"), ("Biobío", "Biobío"), ("La Araucanía", "La Araucanía"),
+            ("Los Ríos", "Los Ríos"), ("Los Lagos", "Los Lagos"), ("Aysén", "Aysén"),
+            ("Magallanes", "Magallanes")
+        ]
     )
 
     class Meta:
-        db_table = 'Inventario'
-        
-class InventarioArriendo(models.Model):
-    id_producto = models.AutoField(primary_key=True)
-    nombre_producto = models.CharField(max_length=25, null=True, blank=True)
-    id_tienda = models.ForeignKey(Tiendas, null=True, blank=True, on_delete=models.CASCADE)  
-    precio_arriendo = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
-    cantidad_disponible = models.IntegerField()
-    talla_producto = models.CharField(
-        max_length=10,
-        choices=[
-            ("XS", "XS"),
-            ("S", "S"),
-            ("M", "M"),
-            ("L", "L"),
-            ("XL", "XL"),
-            ("XXL", "XXL"),
-            ("35", "35"),
-            ("36", "36"),
-            ("37", "37"),
-            ("38", "38"),
-            ("39", "39"),
-            ("40", "40"),
-            ("41", "41"),
-            ("42", "42"),
-            ("43", "43"),
-            ("44", "44"),
-            ("45", "45"),
-        ], 
-        default="45"  
-    )
-    class Meta:
-        db_table = 'InventarioArriendo'
-
-class ProductoArriendo(models.Model):
-    id_producto = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    descripcion = models.TextField()
-    precio_arriendo = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return self.nombre
+        db_table = 'Solicitud_Tienda'
