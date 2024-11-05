@@ -90,7 +90,10 @@ def inventario_arriendo(request):
     productos = InventarioArriendo.objects.all()  # Fetching all rental products
     return render(request, 'inventario_arriendo.html', {'productos': productos})
 
-
+def tienda_detalle(request, id):
+    # Use the id to retrieve the store details
+    tienda = Tiendas.objects.get(id_tienda=id)
+    return render(request, 'tienda_detalle.html', {'tienda': tienda})
 
 #para agregar productos a la tabla ventas 
 from django.shortcuts import render, redirect
