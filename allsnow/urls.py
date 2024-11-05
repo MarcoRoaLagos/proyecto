@@ -26,10 +26,10 @@ urlpatterns = [
     path('inicio/', views.inicio, name='inicio'),
     path('inicio/trabaja-con-nosotros', views.trabaja_con_nosotros, name='trabaja_con_nosotros'),
     path('inicio/registrarme', views.registrarme, name='registrarme'),
-    path('aprobar-solicitud/<int:solicitud_id>/', views.aprobar_solicitud, name='aprobar_solicitud'),
-    path('rechazar-solicitud/<int:solicitud_id>/', views.rechazar_solicitud, name='rechazar_solicitud'),
+    path('aprovar-solicitud/<int:solicitud_id>/',views.aprobar_solicitud,name='aprobar_solicitud'),
+    path('rechazar-solicitud/<int:solicitud_id>/',views.rechazar_solicitud,name='rechazar_solicitud'),
     path('tienda/<int:id>/', views.tienda_detalle, name='tienda_detalle'),
-
+    
     #### naty ######
     path('inventario_ventas/', views.inventario_ventas, name='inventario_ventas'),
     path('agregar_productos/', views.agregar_productos, name='agregar_productos'),
