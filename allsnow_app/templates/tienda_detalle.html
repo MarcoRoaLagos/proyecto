@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtro de Tiendas</title>
+    <title>{{ tienda.nombre_tienda }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/filtro_tienda.css' %}">
 </head>
@@ -29,46 +29,25 @@
     </nav>
 
     <div class="container mt-4">
-        <h2>Filtra las Tiendas</h2>
-        <form method="get" action="{% url 'filtro_tienda' %}">
-            <!-- Filtro por Región -->
-            <div class="form-group">
-                <label for="region">Selecciona la Región:</label>
-                <select name="region" id="region" class="form-control">
-                    <option value="">Seleccionar región</option>
-                    {% for key, value in regiones %}
-                        <option value="{{ key }}" {% if selected_region == key %}selected{% endif %}>{{ value }}</option>
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="text-uppercase">Centro de Rental "{{ tienda.nombre_tienda }}"</h2>
+                <p>{{ tienda.descripcion }}</p>
+                <div class="d-flex mt-3">
+                    <a href="#" class="btn btn-primary mr-2">Comprar</a>
+                    <a href="#" class="btn btn-primary">Arrendar</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    {% for imagen in tienda.imagenes.all %}
+                        <div class="col-6 mb-3">
+                            <img src="{{ imagen.url }}" class="img-fluid" alt="Imagen de {{ tienda.nombre_tienda }}">
+                        </div>
                     {% endfor %}
-                </select>
+                </div>
             </div>
-
-            <!-- Filtro por Nombre de Tienda -->
-            <div class="form-group">
-                <label for="nombre">Buscar Tienda por Nombre:</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre de la tienda..." value="{{ nombre }}">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
-        </form>
-
-        <!-- Resultados de las Tiendas Filtradas -->
-        {% if request.GET %}
-            <h3 class="mt-4">Resultados</h3>
-            <div class="list-group">
-                {% if tiendas %}
-                    {% for tienda in tiendas %}
-                        <a href="{% url 'tienda_detalle' tienda.id_tienda %}" class="list-group-item list-group-item-action">
-                            <h5>{{ tienda.nombre_tienda }}</h5>
-                            <p>Ubicación: {{ tienda.ubicacion }}</p>
-                            <p>Región: {{ tienda.region }}</p>
-                            <p>Estado de Suscripción: {{ tienda.estado_suscripcion }}</p>
-                        </a>
-                    {% endfor %}
-                {% else %}
-                    <p>No se encontraron tiendas con los filtros seleccionados.</p>
-                {% endif %}
-            </div>
-        {% endif %}
+        </div>
     </div>
 
     <footer class="footer">
@@ -85,4 +64,3 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-

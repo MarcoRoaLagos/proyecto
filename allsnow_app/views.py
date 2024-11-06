@@ -1,8 +1,8 @@
 # views.py
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
-from .models import Tiendas, SolicitudTienda,Suscripcion
-
+from .models import Tiendas, SolicitudLocal,Suscripcion
+from .forms import SolicitudLocalForm, SolicitudUsuarioForm, RegistrarmeForm
 from django.shortcuts import render
 from .models import Tiendas
 
@@ -37,7 +37,7 @@ def filtro_tiendas(request):
 
 
 def administrador(request):
-    solicitudes = SolicitudTienda.objects.all()  # Obtener todas las solicitudes de tienda
+    solicitudes = SolicitudLocal.objects.all()  # Obtener todas las solicitudes de tienda
     tiendas = Tiendas.objects.all()              # Obtener todas las tiendas
     suscripciones = Suscripcion.objects.all()    # Obtener todas las suscripciones
 
@@ -51,7 +51,7 @@ def administrador(request):
 
 def aprobar_solicitud(request, solicitud_id):
     # Obtiene la solicitud de tienda usando el campo correcto 'id_solicitud_tienda'
-    solicitud = get_object_or_404(SolicitudTienda, id_solicitud_tienda=solicitud_id)
+    solicitud = get_object_or_404(SolicitudLocal, id_solicitud_tienda=solicitud_id)
     
     # Crea una nueva entrada en Tiendas usando los datos de la solicitud
     Tiendas.objects.create(
@@ -66,11 +66,16 @@ def aprobar_solicitud(request, solicitud_id):
 
 def rechazar_solicitud(request, solicitud_id):
     # Obtiene la solicitud de tienda usando el campo correcto 'id_solicitud_tienda'
-    solicitud = get_object_or_404(SolicitudTienda, id_solicitud_tienda=solicitud_id)
+    solicitud = get_object_or_404(SolicitudLocal, id_solicitud_tienda=solicitud_id)
     
     # Elimina la solicitud de tienda al rechazarla
     solicitud.delete()
     return redirect(reverse('administrador'))
+
+def tienda_detalle(request, id):
+    # Use the id to retrieve the store details
+    tienda = Tiendas.objects.get(id_tienda=id)
+    return render(request, 'tienda_detalle.html', {'tienda': tienda})
 
 def inicio(request):
     return render(request, 'inicio.html')
@@ -90,7 +95,10 @@ def inventario_arriendo(request):
     productos = InventarioArriendo.objects.all()  # Fetching all rental products
     return render(request, 'inventario_arriendo.html', {'productos': productos})
 
-
+def tienda_detalle(request, id):
+    # Use the id to retrieve the store details
+    tienda = Tiendas.objects.get(id_tienda=id)
+    return render(request, 'tienda_detalle.html', {'tienda': tienda})
 
 #para agregar productos a la tabla ventas 
 from django.shortcuts import render, redirect
@@ -549,3 +557,63 @@ def interfaz_arriendo(request, id_tienda):
     return render(request, 'interfaz_arriendo.html', context)
 
 
+####PAULA MIKAL INICIO####
+
+
+
+def inicio(request):
+    return render(request, 'inicio.html')
+
+
+def trabaja_con_nosotros(request):
+    return render(request, 'trabaja_con_nosotros.html')
+
+
+def registrarme(request):
+    form = RegistrarmeForm()
+    if request.method == 'POST':
+        form = RegistrarmeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('registrarme_exitoso')  # Asegúrate de tener esta URL configurada
+    return render(request, 'registrarme.html', {'form_registrarme': form})
+
+
+def registrar_local(request):
+    return render(request, 'registrar_local.html')
+
+def registrarme_exitoso(request):
+    return render(request, 'registrarme_exitoso.html')
+
+
+
+def trabaja_con_nosotros(request):
+    if request.method == 'POST':
+        form_usuario = SolicitudUsuarioForm(request.POST)
+        form_local = SolicitudLocalForm(request.POST)
+
+        if form_usuario.is_valid() and form_local.is_valid():
+            # Crear una instancia de usuario sin guardarla aún en la base de datos
+            usuario = form_usuario.save(commit=False)
+            usuario.save()  # Guarda el usuario en la base de datos
+
+            # Crear una instancia de local asociada al usuario sin guardarla aún
+            local = form_local.save(commit=False)
+            local.usuario = usuario  # Asocia el local al usuario
+            local.save()  # Guarda el local en la base de datos
+
+            # Redirecciona o realiza alguna acción después de guardar
+            return redirect('registrar_local')
+    else:
+        form_usuario = SolicitudUsuarioForm()
+        form_local = SolicitudLocalForm()
+
+    return render(request, 'trabaja_con_nosotros.html', {
+        'form_usuario': form_usuario,
+        'form_local': form_local,
+    })
+
+def login_view(request):
+    return render(request, 'inicio.html')
+
+####PAULA MIKAL FIN####

@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.hashers import make_password
 # Create your models here.
 
 class RolUsuario(models.Model):
@@ -170,6 +170,20 @@ class Inventario(models.Model):
         db_table = 'Inventario'
 
 
+####PAULA MIKAL INICIO####
+
+class SolicitudLocal(models.Model):
+    nombre_local = models.CharField(max_length=50)
+    patente = models.CharField(max_length=50)
+    ubicacion = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre_local
+
+    class Meta:
+        db_table = 'solicitud_local'
+
+
 class SolicitudUsuario(models.Model):
     id_solicitud_usuario = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -177,32 +191,38 @@ class SolicitudUsuario(models.Model):
     rut = models.CharField(max_length=12)
     telefono = models.IntegerField()
     correo = models.EmailField(max_length=100)
-    conf_correo = models.EmailField(max_length=100)
     contraseña = models.CharField(max_length=225)
-    conf_contraseña = models.CharField(max_length=225)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'solicitud_usuario'
 
-class SolicitudTienda(models.Model):
-    id_solicitud_tienda = models.AutoField(primary_key=True)
-    nombre_tienda = models.CharField(max_length=100)
-    patente_local = models.CharField(max_length=10)
-    fecha_solicitud = models.DateField(auto_now_add=True)
-    region = models.CharField(
-        max_length=100,
-        choices=[
-            ("Arica y Parinacota", "Arica y Parinacota"), ("Tarapacá", "Tarapacá"), ("Antofagasta", "Antofagasta"),
-            ("Atacama", "Atacama"), ("Coquimbo", "Coquimbo"), ("Valparaíso", "Valparaíso"),
-            ("Metropolitana", "Metropolitana"), ("O'Higgins", "O'Higgins"), ("Maule", "Maule"),
-            ("Ñuble", "Ñuble"), ("Biobío", "Biobío"), ("La Araucanía", "La Araucanía"),
-            ("Los Ríos", "Los Ríos"), ("Los Lagos", "Los Lagos"), ("Aysén", "Aysén"),
-            ("Magallanes", "Magallanes")
-        ]
-    )
+    def save(self, *args, **kwargs):
+        # Hashear la contraseña antes de guardar el objeto
+        if self.contraseña:
+            self.contraseña = make_password(self.contraseña)
+        super().save(*args, **kwargs)
+
+
+class Registrarme(models.Model):
+    nombre = models.CharField(max_length=25)
+    telefono = models.CharField(max_length=9)
+    correo = models.EmailField(unique=True)
+    contraseña = models.CharField(max_length=25)
+
+    def save(self, *args, **kwargs):
+        # Hashear la contraseña antes de guardar el objeto
+        if self.contraseña:
+            self.contraseña = make_password(self.contraseña)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nombre
 
     class Meta:
-        db_table = 'Solicitud_Tienda'
-        
+        db_table = 'registrarme'
+
+
 class CarritoDeCompras(models.Model):
     usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     tienda_id = models.IntegerField() 
