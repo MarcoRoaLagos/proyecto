@@ -238,8 +238,6 @@ def eliminar_productos(request, id_producto):
         return redirect('inventario_ventas')  
     return redirect('inventario_ventas')  
 
-
-###############################NATA########################################
 def interfaz_dueno(request):
      return render(request, 'interfaz_dueno.html')
 
@@ -299,5 +297,255 @@ def editar_descripcion_view(request):
     else:
         return redirect('centro_rental_view.html')  #cambiar despues esto para que se vaya al inicio
 
+#para mostrar el interfaz de compra los productos de cada tienda 
+from django.shortcuts import render, get_object_or_404
+from .models import Inventario, Tiendas
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def interfaz_compra(request, id_tienda):
+    tienda = get_object_or_404(Tiendas, id_tienda=id_tienda)
+    productos = Inventario.objects.filter(id_tienda=tienda).order_by('nombre_producto')
+
+    context = {
+        'nombre_centro': tienda.nombre_tienda,
+        'productos': productos,
+    }
+
+    return render(request, 'interfaz_compra.html', context)
+
+#para comprar productos y agrgearlos al carro 
+
+from django.shortcuts import render, get_object_or_404
+from .models import Inventario
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+@login_required
+def carro_de_compras(request, producto_id):
+    usuario_id = request.user.id  # Obtiene el ID del usuario autenticado
+    producto = get_object_or_404(Inventario, id_producto=producto_id)
+    id_tienda = producto.id_tienda.id_tienda  # Obtén el ID de la tienda del producto
+
+    if request.method == "POST":
+        # Obtener el carrito específico del usuario desde la sesión
+        carrito = request.session.get(f'carrito_{usuario_id}', {})
+
+        # Agregar o actualizar la cantidad del producto en el carrito del usuario
+        if producto_id in carrito:
+            carrito[producto_id]['cantidad'] += 1
+        else:
+            carrito[producto_id] = {
+                'nombre': producto.nombre_producto,
+                'precio': float(producto.precio),
+                'cantidad': 1
+            }
+
+        # Guardar el carrito de vuelta en la sesión
+        request.session[f'carrito_{usuario_id}'] = carrito
+
+        # Usar mensajes para mostrar un mensaje de éxito
+        messages.success(request, f'Producto {producto.nombre_producto} agregado al carrito')
+
+    # Renderiza la interfaz de compra y pasa el contexto
+    return redirect('interfaz_compra', id_tienda=id_tienda)
+
+###carro de arriendo 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import InventarioArriendo
+
+@login_required
+def carro_de_arriendo(request, producto_id):
+    usuario_id = request.user.id
+    producto = get_object_or_404(InventarioArriendo, id_producto=producto_id)
+    id_tienda = producto.id_tienda.id_tienda
+
+    if request.method == "POST":
+        carrito_arriendo = request.session.get(f'carrito_arriendo_{usuario_id}', {})
+
+        if producto_id in carrito_arriendo:
+            carrito_arriendo[producto_id]['cantidad'] += 1
+        else:
+            carrito_arriendo[producto_id] = {
+                'nombre': producto.nombre_producto,
+                'precio': float(producto.precio_arriendo),
+                'cantidad': 1
+            }
+
+        request.session[f'carrito_arriendo_{usuario_id}'] = carrito_arriendo
+
+        messages.success(request, f'Producto {producto.nombre_producto} agregado al carrito de arriendo')
+
+    return redirect('interfaz_arriendo', id_tienda=id_tienda)
+
+
+#para ver el carro de compras
+from django.shortcuts import render
+from .models import CarritoDeCompras
+
+def ver_carro_de_compras(request):
+    usuario_id = request.user.id  # ID del usuario actual
+    id_tienda = request.session.get('id_tienda', 2)  # ID de la tienda (puedes cambiar la lógica según tu flujo)
+
+    carrito = request.session.get(f'carrito_{usuario_id}', {})
+    productos_carrito = []
+    total_precio = 0.0
+
+    for producto_id, detalles in carrito.items():
+        # Crear o actualizar cada producto en la tabla CarritoDeCompras
+        item_carrito, created = CarritoDeCompras.objects.update_or_create(
+            usuario_id=usuario_id,
+            tienda_id=id_tienda,
+            producto_id=producto_id,
+            defaults={
+                'nombre_producto': detalles['nombre'],
+                'precio': detalles['precio'],
+                'cantidad': detalles['cantidad'],
+                'subtotal': detalles['precio'] * detalles['cantidad']
+            }
+        )
+        productos_carrito.append({
+            'id_producto': producto_id,
+            'nombre': detalles['nombre'],
+            'precio': detalles['precio'],
+            'cantidad': detalles['cantidad'],
+            'subtotal': detalles['precio'] * detalles['cantidad'],
+        })
+        total_precio += detalles['precio'] * detalles['cantidad']
+    context = {
+        'productos_carrito': productos_carrito,
+        'total_precio': total_precio,
+        'id_tienda': id_tienda,
+    }
+    return render(request, 'ver_carro_de_compras.html', context)
+
+#para ver el carro_de_arriendo
+from django.shortcuts import render
+from .models import CarritoDeArriendo
+
+def ver_carro_de_arriendo(request):
+    usuario_id = request.user.id  
+    id_tienda = request.session.get('id_tienda',2)  
+    carrito_arriendo = request.session.get(f'carrito_arriendo_{usuario_id}', {})
+    productos_carrito = []
+    total_precio = 0.0
+
+    for producto_id, detalles in carrito_arriendo.items():
+        # Crear o actualizar cada producto en la tabla CarritoDeArriendo
+        item_carrito, created = CarritoDeArriendo.objects.update_or_create(
+            usuario_id=usuario_id,
+            tienda_id=id_tienda,
+            producto_id=producto_id,
+            defaults={
+                'nombre_producto': detalles['nombre'],
+                'precio': detalles['precio'],
+                'cantidad': detalles['cantidad'],
+                'subtotal': detalles['precio'] * detalles['cantidad']
+            }
+        )
+        productos_carrito.append({
+            'id_producto': producto_id,
+            'nombre': detalles['nombre'],
+            'precio': detalles['precio'],
+            'cantidad': detalles['cantidad'],
+            'subtotal': detalles['precio'] * detalles['cantidad'],
+        })
+        total_precio += detalles['precio'] * detalles['cantidad']
+    context = {
+        'productos_carrito': productos_carrito,
+        'total_precio': total_precio,
+        'id_tienda': id_tienda,
+    }
+    return render(request, 'ver_carro_de_arriendo.html', context)
+
+
+#para eliminar productos del carro de compra
+
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def eliminar_producto(request, producto_id):
+    usuario_id = request.user.id
+    carrito_key = f'carrito_{usuario_id}'
+    carrito = request.session.get(carrito_key, {})
+
+    # Eliminar el producto del carrito si existe
+    if str(producto_id) in carrito:
+        del carrito[str(producto_id)]
+        request.session[carrito_key] = carrito  
+
+    return redirect('ver_carro_de_compras')  
+
+# eliminar productos del carro de arriendo
+
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def eliminar_producto_arriendo(request, producto_id):
+    usuario_id = request.user.id
+    carrito_key = f'carrito_arriendo_{usuario_id}'
+    carrito_arriendo = request.session.get(carrito_key, {})
+
+    # Eliminar el producto del carrito si existe
+    if str(producto_id) in carrito_arriendo:
+        del carrito_arriendo[str(producto_id)]
+        request.session[carrito_key] = carrito_arriendo  
+
+    return redirect('ver_carro_de_arriendo')  
+
+
+#actualizar la cantidad de productos en el carro de compras
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import CarritoDeCompras
+
+@login_required
+def actualizar_cantidad(request, producto_id):
+    if request.method == 'POST':
+        nueva_cantidad = int(request.POST.get('cantidad'))
+        usuario_id = request.user.id
+        carrito_key = f'carrito_{usuario_id}'
+        carrito = request.session.get(carrito_key, {})
+
+        # Actualiza la cantidad en la sesión y en la base de datos
+        if str(producto_id) in carrito:
+            if nueva_cantidad > 0:
+                # Actualiza la cantidad y subtotal
+                carrito[str(producto_id)]['cantidad'] = nueva_cantidad
+                carrito[str(producto_id)]['subtotal'] = carrito[str(producto_id)]['precio'] * nueva_cantidad
+                request.session[carrito_key] = carrito
+                # Actualizar en la base de datos
+                CarritoDeCompras.objects.filter(usuario_id=usuario_id, producto_id=producto_id).update(
+                    cantidad=nueva_cantidad,
+                    subtotal=carrito[str(producto_id)]['subtotal']
+                )
+            else:
+                # Elimina el producto si la cantidad es 0
+                del carrito[str(producto_id)]
+                request.session[carrito_key] = carrito
+                CarritoDeCompras.objects.filter(usuario_id=usuario_id, producto_id=producto_id).delete()
+
+    return redirect('ver_carro_de_compras')
+
+
+#para mostrar el interfaz de arriendo los productos de cada tienda 
+from django.shortcuts import render, get_object_or_404
+from .models import InventarioArriendo, Tiendas  
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def interfaz_arriendo(request, id_tienda):
+    tienda = get_object_or_404(Tiendas, id_tienda=id_tienda)
+    productos = InventarioArriendo.objects.filter(id_tienda=tienda).order_by('nombre_producto')  
+    context = {
+        'nombre_centro': tienda.nombre_tienda,  
+        'productos': productos,
+    }
+
+    return render(request, 'interfaz_arriendo.html', context)
 
 

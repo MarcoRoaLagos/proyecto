@@ -202,3 +202,42 @@ class SolicitudTienda(models.Model):
 
     class Meta:
         db_table = 'Solicitud_Tienda'
+        
+class CarritoDeCompras(models.Model):
+    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    tienda_id = models.IntegerField() 
+    producto_id = models.IntegerField()  # ID del producto añadido.
+    nombre_producto = models.CharField(max_length=255)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.IntegerField()
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        self.subtotal = self.precio * self.cantidad
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Carrito de {self.usuario} - {self.nombre_producto} ({self.cantidad})"
+
+    class Meta:
+        verbose_name_plural = "Carritos de Compras"
+
+
+class CarritoDeArriendo(models.Model):
+    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    tienda_id = models.IntegerField()
+    producto_id = models.IntegerField()  # ID del producto arrendado.
+    nombre_producto = models.CharField(max_length=255)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.IntegerField()
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        self.subtotal = self.precio * self.cantidad
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Carrito de Arriendo de {self.usuario} - {self.nombre_producto} ({self.cantidad})"
+
+    class Meta:
+        verbose_name_plural = "Carritos de Arriendo"

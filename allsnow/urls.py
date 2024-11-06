@@ -28,8 +28,6 @@ urlpatterns = [
     path('inicio/registrarme', views.registrarme, name='registrarme'),
     path('aprovar-solicitud/<int:solicitud_id>/',views.aprobar_solicitud,name='aprobar_solicitud'),
     path('rechazar-solicitud/<int:solicitud_id>/',views.rechazar_solicitud,name='rechazar_solicitud'),
-    
-    #### naty ######
     path('admin/', admin.site.urls),
     path('filtro_tienda/', views.filtro_tiendas, name='filtro_tienda'),
     path('administrador/', views.administrador, name='administrador'),  
@@ -45,4 +43,14 @@ urlpatterns = [
     path('interfaz_dueno/', views.interfaz_dueno, name='interfaz_dueno'),
     path('centro_rental_view/', views.centro_rental_view, name='centro_rental_view'),
     path('editar_descripcion_view/', views.editar_descripcion_view, name='editar_descripcion_view'),
+    
+    path('interfaz_compra/<int:id_tienda>/',views.interfaz_compra, name='interfaz_compra'),
+    path('carro_de_compras/<int:producto_id>/', views.carro_de_compras, name='carro_de_compras'), 
+    path('ver_carro_de_compras/', views.ver_carro_de_compras, name='ver_carro_de_compras'),
+    path('eliminar_producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
+    path('eliminar_producto_arriendo/<int:producto_id>/', views.eliminar_producto_arriendo, name='eliminar_producto_arriendo'),
+    path('actualizar_cantidad/<int:producto_id>/', views.actualizar_cantidad, name='actualizar_cantidad'),
+    path('interfaz_arriendo/<int:id_tienda>/',views.interfaz_arriendo, name='interfaz_arriendo'),
+    path('carro_de_arriendo/<int:producto_id>/', views.carro_de_arriendo, name='carro_de_arriendo'),
+    path('carro_de_arriendo/', views.ver_carro_de_arriendo, name='ver_carro_de_arriendo'),
 ]
