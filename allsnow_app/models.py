@@ -221,7 +221,7 @@ class Registrarme(models.Model):
 
     class Meta:
         db_table = 'registrarme'
-
+###paula fin###
 
 class CarritoDeCompras(models.Model):
     usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)

@@ -51,8 +51,8 @@ class RegistrarmeForm(forms.ModelForm):
             'contraseña': forms.PasswordInput(), } 
         
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Correo electrónico', max_length=254)
-    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    email = forms.EmailField(label='Correo electrónico', max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput, label='Contraseña', max_length=25)
 
 ####PAULA MIKAL FIN####
 

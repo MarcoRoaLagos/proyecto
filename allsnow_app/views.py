@@ -1,10 +1,15 @@
 # views.py
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
-from .models import Tiendas, SolicitudLocal,Suscripcion
+from .models import Tiendas, SolicitudLocal,Suscripcion, Registrarme
 from .forms import SolicitudLocalForm, SolicitudUsuarioForm, RegistrarmeForm
 from django.shortcuts import render
 from .models import Tiendas
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth import login as auth_login
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm
 
 def filtro_tiendas(request):
     # Filtra solo las tiendas con suscripción activa
@@ -614,6 +619,32 @@ def trabaja_con_nosotros(request):
     })
 
 def login_view(request):
-    return render(request, 'inicio.html')
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            try:
+                # Buscamos al usuario en la tabla 'Registrarme'
+                user = Registrarme.objects.get(correo=email)
+
+                # Verificamos la contraseña usando check_password
+                if check_password(password, user.contraseña):
+                    # Iniciar sesión creando una variable de sesión manualmente
+                    request.session['user_id'] = user.id
+                    return redirect('filtro_tienda')  # Redirige a la vista 'filtro_tienda'
+
+                else:
+                    messages.error(request, "Correo o contraseña incorrecta")
+
+            except Registrarme.DoesNotExist:
+                # Si el usuario no existe, muestra un mensaje de error
+                messages.error(request, "Correo o contraseña incorrecta")
+    
+    else:
+        form = LoginForm()
+
+    return render(request, 'login.html', {'form': form})
 
 ####PAULA MIKAL FIN####
